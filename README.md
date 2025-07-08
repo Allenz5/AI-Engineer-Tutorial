@@ -1,7 +1,16 @@
 # AI-Engineer-Tutorial
 ## Pre-Training
 ### Attention
+
 ### Encoder & Decoder
+The encoder-decoder architecture has been widely used in machine learning even before the introduction of the attention mechanism—for example, in sequence-to-sequence models based on recurrent neural networks. The Transformer model enhanced this architecture by introducing self-attention and cross-attention mechanisms, significantly improving its effectiveness for sequence modeling tasks.  
+  
+In the encoder, we apply self-attention to allow each token to attend to all other tokens in the input sequence. This enables the model to capture global context and semantic relationships across the entire input. In contrast, the decoder uses masked self-attention, which restricts each token to attend only to previous tokens in the output sequence. This masking is essential to prevent information leakage during autoregressive generation. Additionally, the decoder incorporates cross-attention to access the encoder’s output representations, effectively allowing the decoder to condition its output on the input sequence.  
+  
+This encoder-decoder setup is particularly effective for tasks like machine translation, where the encoder is responsible for understanding the source sentence, and the decoder generates a grammatically and semantically correct target sentence in another language.  
+  
+Notably, GPT adopts a decoder-only architecture. It is trained in an autoregressive manner, meaning it generates text one token at a time, conditioning only on previously generated tokens. As such, it employs only masked self-attention and does not have access to future tokens during training or inference. This design ensures that the model avoids information leakage and is optimized for generation tasks rather than bidirectional understanding.  
+  
 ### FFN
 ### MoE
 ## Post-Training
