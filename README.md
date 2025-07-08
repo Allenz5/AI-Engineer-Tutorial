@@ -5,9 +5,7 @@
 
 The **self-attention mechanism** is at the heart of the Transformer architecture. It was introduced to address a long-standing challenge in sequence modeling: determining which parts of the input sequence are most relevant to a given token.  
   
-In self-attention, the input sequence is first tokenized and embedded into vectors. These embeddings are enriched with **positional encodings** to preserve the order of tokens, forming a matrix of shape *(sequence length, embedding dimension)* — for example, *(n, 512)*.  
-  
-This matrix is then linearly projected into three distinct matrices:
+In self-attention, the input sequence is first tokenized and embedded into vectors. These embeddings are enriched with **positional encodings** to preserve the order of tokens, forming a matrix of shape *(sequence length, embedding dimension)* — for example, *(n, 512)*. This matrix is then linearly projected into three distinct matrices:  
   
 - **Q (Query)**  
 - **K (Key)**  
