@@ -23,6 +23,7 @@ The core attention function computes how much each token should attend to others
   
 ```math
 Attention(Q, K, V) = softmax\left(\frac{QK^T}{\sqrt{d_k}}\right) \times V
+```
 This operation results in a new representation for each token that integrates not only its own meaning but also contextual information from other tokens in the sequence.  
   
 To further enhance the model's capacity, **multi-head attention** is applied. Instead of performing a single attention operation, the model splits the input into multiple subspaces (or "heads"), performs attention in parallel, and concatenates the results. This allows the model to capture different types of relationships and interactions simultaneously.  
