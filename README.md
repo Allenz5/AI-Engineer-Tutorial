@@ -1,7 +1,34 @@
 # AI-Engineer-Tutorial
 ## Pre-Training
-### Attention
+### Self-Attention
+## Understanding Self-Attention in the Transformer Architecture
 
+The **self-attention mechanism** is at the heart of the Transformer architecture. It was introduced to address a long-standing challenge in sequence modeling: determining which parts of the input sequence are most relevant to a given token.  
+  
+In self-attention, the input sequence is first tokenized and embedded into vectors. These embeddings are enriched with **positional encodings** to preserve the order of tokens, forming a matrix of shape *(sequence length, embedding dimension)* — for example, *(n, 512)*.  
+  
+This matrix is then linearly projected into three distinct matrices:
+  
+- **Q (Query)**  
+- **K (Key)**  
+- **V (Value)**  
+  
+using learned weight matrices **W<sub>Q</sub>**, **W<sub>K</sub>**, and **W<sub>V</sub>**.  
+  
+- The **Query vector** represents what the current token is looking for.  
+- The **Key vector** indicates what information each token contains.  
+- The **Value vector** holds the actual content to be aggregated.  
+  
+The core attention function computes how much each token should attend to others by comparing its Query with all Keys, typically using **scaled dot-product attention**:  
+  
+```math
+Attention(Q, K, V) = softmax\left(\frac{QK^T}{\sqrt{d_k}}\right) \times V
+This operation results in a new representation for each token that integrates not only its own meaning but also contextual information from other tokens in the sequence.  
+  
+To further enhance the model's capacity, **multi-head attention** is applied. Instead of performing a single attention operation, the model splits the input into multiple subspaces (or "heads"), performs attention in parallel, and concatenates the results. This allows the model to capture different types of relationships and interactions simultaneously.  
+  
+Finally, the output passes through a **feed-forward neural network (FFN)**, which applies non-linear transformations to each token independently, boosting the model's expressiveness. This combination of mechanisms allows Transformers to model complex dependencies in sequences without relying on recurrence or convolution.  
+  
 ### Encoder & Decoder
 The encoder-decoder architecture has been widely used in machine learning even before the introduction of the attention mechanism—for example, in sequence-to-sequence models based on recurrent neural networks. The Transformer model enhanced this architecture by introducing self-attention and cross-attention mechanisms, significantly improving its effectiveness for sequence modeling tasks.  
   
@@ -11,7 +38,6 @@ This encoder-decoder setup is particularly effective for tasks like machine tran
   
 Notably, GPT adopts a decoder-only architecture. It is trained in an autoregressive manner, meaning it generates text one token at a time, conditioning only on previously generated tokens. As such, it employs only masked self-attention and does not have access to future tokens during training or inference. This design ensures that the model avoids information leakage and is optimized for generation tasks rather than bidirectional understanding.  
   
-### FFN
 ### MoE
 ## Post-Training
 ### Supervised Fine-Tuning
