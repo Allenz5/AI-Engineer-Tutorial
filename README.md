@@ -38,6 +38,15 @@ Notably, GPT adopts a decoder-only architecture. It is trained in an autoregress
 ### MoE
 ## Post-Training
 ### Supervised Fine-Tuning
+### LoRA and QLoRA
+All matrices can be decomposed using Singular Value Decomposition (SVD). A low-rank matrix has fewer non-zero singular values than the number of rows, which means its information can be represented using fewer “directions” in space. In LLMs, the model parameters are typically high-rank matrices, as they need to encode rich and diverse information across many dimensions. However, during fine-tuning, the delta matrix which represents updates to the original model parameters is often low-rank because the new information is task-specific and relatively narrow in scope.  
+  
+As a result, we can focus on only the top singular directions, which capture most of the meaningful variation in the fine-tuning signal. Since the delta matrix is low-rank, we don’t need to store or compute the full SVD (U, Σ, Vᵀ). Instead, we can approximate the update using the product of two smaller matrices, A and B, which is sufficient to represent the essential information efficiently.  
+  
+We still use backpropagation to train the two matrices A and B. The main hyperparameters include the scaling factor and the rank r. A larger r means we want to capture more directions in the parameter space, which slows down training. The scaling factor controls how much influence the delta matrix has on the original parameters. LoRA can be applied to multiple layers in a Transformer model, most commonly to the query and value projection matrices.  
+  
+In LLMs, parameters are typically stored as floating-point numbers. Mathematically, there's a technique called quantization, which allows us to represent a float matrix using integers while preserving most of its information. In QLoRA, we apply quantization to reduce the memory footprint during fine-tuning by storing the model in an integer format (e.g., int4 or int8). When performing inference, the model is converted back to float as needed. This approach allows efficient fine-tuning of large models with significantly reduced hardware requirements.  
+  
 ### PPO
 ### DPO
 ### DeepSeek R1 && GRPO
