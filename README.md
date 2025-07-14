@@ -36,6 +36,12 @@ This encoder-decoder setup is particularly effective for tasks like machine tran
 Notably, GPT adopts a decoder-only architecture. It is trained in an autoregressive manner, meaning it generates text one token at a time, conditioning only on previously generated tokens. As such, it employs only masked self-attention and does not have access to future tokens during training or inference. This design ensures that the model avoids information leakage and is optimized for generation tasks rather than bidirectional understanding.  
   
 ### MoE
+In Transformer architectures, the Mixture of Experts (MoE) module typically replaces the Feed-Forward Network (FFN). An MoE consists of a router and multiple experts. The router selects one or two experts per token and forwards the token to those experts for FFN processing.  
+  
+This approach increases model capacity without significantly raising computational cost. Each expert may specialize in certain patterns, though the specialization is abstract and not as clearly defined as subject areas.  
+  
+During training, the MoE participates in backpropagation. The router gradually learns to route tokens to the most appropriate experts. Both LLaMA 4 and DeepSeek adopt MoE architectures, with a shared expert included to handle general-purpose tasks.  
+  
 ## Post-Training
 ### Supervised Fine-Tuning
 ### LoRA and QLoRA
