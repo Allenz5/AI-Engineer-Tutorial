@@ -39,10 +39,7 @@ The CLIP model consists of two main components: **an image encoder (typically Vi
 ### Vision-language connector
 Vision-language connector models, such as **LLaVA** and **BLIP**, aim to bridge image understanding models like **CLIP-ViT** with large language models (LLMs). They introduce a lightweight **projector** module that maps image embeddings into the LLM's embedding space, enabling the LLM to understand and respond to visual content. This architecture is efficient and easy to train, but the projector can become a bottleneck that limits overall performance.
 
-**LLaVA** (Large Language and Vision Assistant) notably proposed a method for generating multimodal instruction-following datasets using GPT-4. Its core components include:
-- A **CLIP-ViT image encoder** for visual feature extraction  
-- A **projector** that transforms image embeddings into the LLM space  
-- A **language model** (e.g., Vicuna or LLaMA)  
+**LLaVA** (Large Language and Vision Assistant) notably proposed a method for generating multimodal instruction-following datasets using GPT-4. Its core components include: a **CLIP-ViT image encoder** for visual feature extraction, a **projector** that transforms image embeddings into the LLM space, and a **language model** (e.g., Vicuna or LLaMA).  
 #### Phase 1: Projector Alignment  
 - **Input**: Image-caption pairs  
 - **Process**: Images - CLIP encoder - projector - concatenation with an instruction prompt - LLM - Compare with ground truth  
