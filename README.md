@@ -29,7 +29,11 @@ There are currently three mainstream approaches to multimodality:
 1. vision-language connector  
 2. cross-attention  
 3. native multimodal model.  
-### CLIP and ViT
+### ViT and CLIP
+ViT first splits the input image into fixed-size patches. Each patch is flattened into a 1D vector and linearly projected into a patch token. A learnable [CLS] token is prepended to the sequence of patch tokens, which is used to aggregate global information from the entire image. Additionally, a learnable position embedding is added to each token (including the [CLS] token) to retain spatial information. ViT uses an encoder-only architecture, meaning all tokens attend to each other via self-attention. After several layers of self-attention and feed-forward networks (FFNs), the [CLS] token encodes the overall semantic representation of the image. This token is then passed through an MLP head to produce the final output, typically for classification. It’s important to note that the original ViT was designed for image classification tasks and trained in a supervised manner using fixed category tags.  
+
+
+
 ### Vision-language connector
 vision-language connector的主要模型包括LLaVA和BLIP，他们的架构是在图片理解模型如CLIP-ViT和LLM之间建立一个projector，使LLM可以理解图片内容，并执行与图片相关的任务。
 ### Cross-attention
