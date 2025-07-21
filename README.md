@@ -1,4 +1,4 @@
-# AI-Engineer-Tutorial
+# LLM-Learning-Notes
 ## Post-Training
 ### Supervised Fine-Tuning
 ### LoRA and QLoRA
