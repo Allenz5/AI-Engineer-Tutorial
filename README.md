@@ -22,6 +22,15 @@ For each prompt, a group of responses is generated and scored using a reward mod
 Unlike DPO and PPO, Group Relative Policy Optimization (GRPO) also uses KL-Divergence with clipping to prevent the model from deviating too far from the initial model and experiencing catastrophic forgetting. KL-Divergence measures the difference between two models.  
 
 ### Offline
+
+## Multimodal
+### Intro
+There are currently three mainstream approaches to multimodality: the first is the vision-language connector, the second is cross-attention, and the third is the native multimodal model.
+### CLIP and ViT
+### Vision-language connector
+vision-language connector的主要模型包括LLaVA和BLIP，他们的架构是在图片理解模型如CLIP-ViT和LLM之间建立一个projector，使LLM可以理解图片内容，并执行与图片相关的任务。
+### Cross-attention
+### Native Multimodal Model
 ## LLM Foundation
 ### Self-Attention
 The **self-attention mechanism** is at the heart of the Transformer architecture. It was introduced to address a long-standing challenge in sequence modeling: determining which parts of the input sequence are most relevant to a given token.  
@@ -68,3 +77,8 @@ During training, the MoE participates in backpropagation. The router gradually l
 ## Evaluations
 ## RAG
 ## Infra
+## Papers and Tech reports
+### Gemini Tech Report
+### Ernie4.5 Tech Report
+### DeepSeek R1 Tech Report
+### Multimodality GRPO
