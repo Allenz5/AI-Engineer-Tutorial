@@ -14,7 +14,7 @@ In LLMs, parameters are typically stored as floating-point numbers. Mathematical
 Catastrophic forgetting refers to the phenomenon where a large language model (LLM) loses previously learned knowledge and suffers performance degradation after being fine-tuned. This typically happens because the updated parameters drift too far from the original pre-trained parameters. To mitigate this, many techniques are designed to constrain the parameter updates and preserve the model’s original knowledge. Mathematically, this can be achieved by reducing the learning rate, applying regularization methods such as KL-divergence (as in GRPO) or L2 regularization, and using Elastic Weight Consolidation (EWC). Parameter-Efficient Fine-Tuning (PEFT) methods like LoRA also help prevent catastrophic forgetting by updating only a small subset of parameters. In LoRA, the scaling factor further controls the extent of parameter modification. In addition to model-level techniques, careful design of the training pipeline can also reduce the risk of catastrophic forgetting from a systems perspective.  
 ### PPO
 ### DPO
-### DeepSeek R1 && GRPO
+### DeepSeek R1 and GRPO
 DeepSeek R1 exclusively uses questions with verifiable answers, such as coding and math challenges. They initially verified that the reasoning process (Chain of Thought) becomes more sophisticated, reasoning time increases, and accuracy improves when a large language model is post-trained solely on questions with known correct answers. This was the *“Aha” moment* for DeepSeek R1. They created a rule-based reward system for reinforcement learning. 
   
 For each prompt, a group of responses is generated and scored using a reward model. The average score across these responses is used as the baseline (Monte Carlo Method), and the advantage of each response is computed relative to this baseline. The advantage is then used to calculate the loss for each response, which guides the model’s gradient update. In this way, the average score reflects the model’s current capability and serves as a baseline. The model is then updated to move toward behaviors we prefer and away from those we do not.  
@@ -37,7 +37,23 @@ The CLIP model consists of two main components: **an image encoder (typically Vi
 - https://www.youtube.com/watch?v=-TdDZ6C9rdg  
 - https://www.youtube.com/watch?v=BxQep0qdeWA  
 ### Vision-language connector
-vision-language connector的主要模型包括LLaVA和BLIP，他们的架构是在图片理解模型如CLIP-ViT和LLM之间建立一个projector，使LLM可以理解图片内容，并执行与图片相关的任务。
+Vision-language connector models, such as **LLaVA** and **BLIP**, aim to bridge image understanding models like **CLIP-ViT** with large language models (LLMs). They introduce a lightweight **projector** module that maps image embeddings into the LLM's embedding space, enabling the LLM to understand and respond to visual content. This architecture is efficient and easy to train, but the projector can become a bottleneck that limits overall performance.
+
+**LLaVA** (Large Language and Vision Assistant) notably proposed a method for generating multimodal instruction-following datasets using GPT-4. Its core components include:
+- A **CLIP-ViT image encoder** for visual feature extraction  
+- A **projector** that transforms image embeddings into the LLM space  
+- A **language model** (e.g., Vicuna or LLaMA)  
+Phase 1: Projector Alignment  
+- **Input**: Image-caption pairs  
+- **Process**: Images - CLIP encoder - projector - concatenation with an instruction prompt - LLM - Compare with ground truth  
+- **Objective**: Match the generated caption with the ground truth caption using loss computation  
+- **Optimization**: Only the **projector** is trained in this phase via backpropagation  
+Phase 2: Instruction Tuning  
+- **Input**: More complex GPT-4-generated instruction-following datasets containing images and tasks (e.g., question answering, dialogue)
+- **Process**: Similar to Phase 1  
+- **Objective**: Fine-tune the model so the LLM can perform vision-language tasks  
+- **Optimization**: **Both the projector and the LLM** are trained. Parameter-efficient tuning methods like **LoRA** can be applied to accelerate and stabilize training.  
+This two-stage training pipeline helps the model align visual and textual modalities effectively, enabling it to handle a wide range of multimodal tasks.  
 ### Gemini Multimodality
 ### Ernie4.5 Multimodality
 ### Cross-attention
