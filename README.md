@@ -43,17 +43,16 @@ Vision-language connector models, such as **LLaVA** and **BLIP**, aim to bridge 
 - A **CLIP-ViT image encoder** for visual feature extraction  
 - A **projector** that transforms image embeddings into the LLM space  
 - A **language model** (e.g., Vicuna or LLaMA)  
-Phase 1: Projector Alignment  
+#### Phase 1: Projector Alignment  
 - **Input**: Image-caption pairs  
 - **Process**: Images - CLIP encoder - projector - concatenation with an instruction prompt - LLM - Compare with ground truth  
 - **Objective**: Match the generated caption with the ground truth caption using loss computation  
 - **Optimization**: Only the **projector** is trained in this phase via backpropagation  
-Phase 2: Instruction Tuning  
+#### Phase 2: Instruction Tuning  
 - **Input**: More complex GPT-4-generated instruction-following datasets containing images and tasks (e.g., question answering, dialogue)
 - **Process**: Similar to Phase 1  
 - **Objective**: Fine-tune the model so the LLM can perform vision-language tasks  
 - **Optimization**: **Both the projector and the LLM** are trained. Parameter-efficient tuning methods like **LoRA** can be applied to accelerate and stabilize training.  
-This two-stage training pipeline helps the model align visual and textual modalities effectively, enabling it to handle a wide range of multimodal tasks.  
 ### Gemini Multimodality
 ### Ernie4.5 Multimodality
 ### Cross-attention
