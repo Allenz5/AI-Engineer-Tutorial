@@ -25,7 +25,10 @@ Unlike DPO and PPO, Group Relative Policy Optimization (GRPO) also uses KL-Diver
 
 ## Multimodal
 ### Intro
-There are currently three mainstream approaches to multimodality: the first is the vision-language connector, the second is cross-attention, and the third is the native multimodal model.
+There are currently three mainstream approaches to multimodality:  
+1. vision-language connector  
+2. cross-attention  
+3. native multimodal model.  
 ### CLIP and ViT
 ### Vision-language connector
 vision-language connector的主要模型包括LLaVA和BLIP，他们的架构是在图片理解模型如CLIP-ViT和LLM之间建立一个projector，使LLM可以理解图片内容，并执行与图片相关的任务。
