@@ -31,14 +31,16 @@ There are currently three mainstream approaches to multimodality:
 3. native multimodal model.  
 ### ViT and CLIP
 - https://www.youtube.com/watch?v=-TdDZ6C9rdg  
-- https://www.youtube.com/watch?v=BxQep0qdeWA  
+- https://www.youtube.com/watch?v=BxQep0qdeWA
+  
 ViT first splits the input image into fixed-size patches. Each patch is flattened into a 1D vector and linearly projected into a patch token. A learnable `[CLS]` token is prepended to the sequence of patch tokens, which is used to aggregate global information from the entire image. Additionally, a learnable position embedding is added to each token (including the `[CLS]` token) to retain spatial information. ViT uses an encoder-only architecture, meaning all tokens attend to each other via self-attention. After several layers of self-attention and feed-forward networks (FFNs), the `[CLS]` token encodes the overall semantic representation of the image. This token is then passed through an MLP head to produce the final output, typically for classification. It’s important to note that the original ViT was designed for image classification tasks, trained in a supervised manner using fixed category tags, and needed to be retrained for different tasks.  
 
 The CLIP model consists of two main components: **an image encoder (typically ViT or ResNet)** and a **text encoder (a Transformer)**. It is trained using contrastive learning across batches. Specifically, for each batch, the model computes similarity scores between all image-text pairs and optimizes the embeddings so that matched pairs are pulled closer together in the embedding space, while mismatched pairs are pushed apart. The goal is to align images and their corresponding textual descriptions within a shared semantic embedding space. One of CLIP’s key advantages is that it only requires image-caption pairs, which are easy to collect at scale, and doesn’t rely on hard-coded task-specific labels or supervised fine-tuning for each downstream task. Since the training objective is to compare semantic similarity rather than generate captions or perform classification directly, the learning task becomes significantly easier. Thanks to this architecture, CLIP enables zero-shot image classification. We can construct prompts based on tags and compare the similarity between each prompt and the image to be classified. CLIP also has limitations. It struggles with abstract or complex instructions, and its performance can degrade on out-of-distribution images.   
 ### Vision-language connector
 - https://www.youtube.com/watch?v=jjdKfk89yAM&t=1522s
 - https://www.youtube.com/watch?v=bK9ns4DkxQg&t=2593s
-- https://www.youtube.com/watch?v=k0DAtZCCl1w&t=2273s  
+- https://www.youtube.com/watch?v=k0DAtZCCl1w&t=2273s
+  
 Vision-language connector models, such as **LLaVA** and **BLIP**, aim to bridge image understanding models like **CLIP-ViT** with large language models (LLMs). They introduce a lightweight **projector** module that maps image embeddings into the LLM's embedding space, enabling the LLM to understand and respond to visual content. This architecture is efficient and easy to train, but the projector can become a bottleneck that limits overall performance.
 
 **LLaVA** (Large Language and Vision Assistant) notably proposed a method for generating multimodal instruction-following datasets using GPT-4. Its core components include: a **CLIP-ViT image encoder** for visual feature extraction, a **projector** that transforms image embeddings into the LLM space, and a **language model** (e.g., Vicuna or LLaMA).  
