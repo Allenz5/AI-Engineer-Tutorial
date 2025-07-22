@@ -59,14 +59,14 @@ BLIP-2 follows a similar three-module structure: an image encoder, a vision-lang
 
 #### Phase 1: Projector Alignment  
 In the first training stage, BLIP-2 proposes three objectives to train Q-Former while keeping the image encoder and language model frozen:
-1. **Image-Text Contrastive Learning**  
+- **Image-Text Contrastive Learning**  
    - Similar to CLIP.
    - A text encoder converts captions into embeddings.
    - The Q-Former is trained so that its image embeddings align with the corresponding text embeddings.
-2. **Image-Text Matching**  
+- **Image-Text Matching**  
    - A text encoder embeds captions.
    - A binary classifier predicts whether an image-text pair matches based on the alignment between image and text embeddings.
-3. **Image Caption Generation Loss**  
+- **Image Caption Generation Loss**  
    - A frozen lightweight text decoder is used to generate captions from the image embeddings output by Q-Former.
    - The loss is computed against ground-truth captions.
    - Only the Q-Former (and possibly the image encoder) is trained, so that the generated embeddings are more compatible with the decoder.
