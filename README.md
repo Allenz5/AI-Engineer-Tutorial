@@ -50,6 +50,25 @@ Vision-language connector models, such as **LLaVA** and **BLIP**, aim to bridge 
 - **Process**: Similar to Phase 1  
 - **Objective**: Fine-tune the model so the LLM can perform vision-language tasks  
 - **Optimization**: **Both the projector and the LLM** are trained. Parameter-efficient tuning methods like **LoRA** can be applied to accelerate and stabilize training.  
+  
+BLIP-2 follows a similar three-module structure: an image encoder, a vision-language connector (Q-Former), and a language model. Q-Former acts as a lightweight transformer module that bridges the gap between the image encoder the language model. Its core design involves **learnable queries** that extract high-level semantic information from noisy image embeddings. The process includes: **Cross-attention**: The learnable query tokens attend to the frozen image embeddings output by the CLIP image encoder, **Self-attention**: The query tokens interact with each other to refine the representation, **Feed-forward network (FFN)**: The processed queries are passed through an FFN, **Projection layer**: A linear layer projects the output into the embedding space used by the LLM. The intuition is that each query learns to focus on specific aspects of the image, such as "What objects are present?"  
+
+#### Phase 1: Projector Alignment  
+In the first training stage, BLIP-2 proposes three objectives to train Q-Former while keeping the image encoder and language model frozen:
+1. **Image-Text Contrastive Learning**  
+   - Similar to CLIP.
+   - A text encoder converts captions into embeddings.
+   - The Q-Former is trained so that its image embeddings align with the corresponding text embeddings.
+2. **Image-Text Matching**  
+   - A text encoder embeds captions.
+   - A binary classifier predicts whether an image-text pair matches based on the alignment between image and text embeddings.
+3. **Image Caption Generation Loss**  
+   - A frozen lightweight text decoder is used to generate captions from the image embeddings output by Q-Former.
+   - The loss is computed against ground-truth captions.
+   - Only the Q-Former (and possibly the image encoder) is trained, so that the generated embeddings are more compatible with the decoder.
+
+#### Phase 2: Instruction Tuning 
+
 ### Gemini Multimodality
 ### Ernie4.5 Multimodality
 ### Cross-attention
