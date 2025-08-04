@@ -1,5 +1,5 @@
 # LLM-Learning-Notes
-## Finetuning
+## Fine-tuning
 ### SFT, DPO and RFT
 | Method | Data Format | Objective | Learning Focus | Use Cases |
 |--------|-------------|-----------|----------------|-----------|
