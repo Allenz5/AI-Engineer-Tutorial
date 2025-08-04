@@ -1,6 +1,5 @@
 # LLM-Learning-Notes
 ## Fine-tuning
-### SFT, DPO and RFT
 | Method | Data Format | Objective | Learning Focus | Use Cases |
 |--------|-------------|-----------|----------------|-----------|
 | **SFT** | `Input + Output` | Mimic responses | Teaches the model *what* to output | Structured tasks like function calls, learning stop tokens, constrained outputs |
