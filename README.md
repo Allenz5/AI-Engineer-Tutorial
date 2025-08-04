@@ -1,5 +1,11 @@
 # LLM-Learning-Notes
 ## Post-Training
+### SFT, DPO and RFT
+| Method | Data Format | Objective | Learning Focus | Use Cases |
+|--------|-------------|-----------|----------------|-----------|
+| **SFT (Supervised Fine-Tuning)** | `Input + Output` | Mimic human-labeled responses | Teaches the model *what* to output | Structured tasks like function calls, learning stop tokens, constrained outputs |
+| **DPO (Direct Preference Optimization)** | `Input + (Good Output, Bad Output)` | Learn to prefer better responses | Teaches the model *which output is better* among alternatives | Preference tuning: helpfulness, tone, safety |
+| **RFT (Reinforcement Fine-Tuning, e.g. PPO)** | `Input + Reward Scoring Model` | Optimize response quality via rewards | Teaches the model *how to optimize* its thinking process to earn high reward | Complex tasks like coding, multi-turn dialogue |
 ### Supervised Fine-Tuning
 ### LoRA and QLoRA
 All matrices can be decomposed using Singular Value Decomposition (SVD). A low-rank matrix has fewer non-zero singular values than the number of rows, which means its information can be represented using fewer “directions” in space. In LLMs, the model parameters are typically high-rank matrices, as they need to encode rich and diverse information across many dimensions. However, during fine-tuning, the delta matrix which represents updates to the original model parameters is often low-rank because the new information is task-specific and relatively narrow in scope.  
