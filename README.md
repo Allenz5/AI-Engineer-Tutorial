@@ -20,10 +20,11 @@ Supervised Fine-Tuning (SFT) trains a language model to generate ideal responses
 \mathcal{L}_{\text{SFT}} = -\sum_{i=1}^{N} \log \left(p_\theta(\text{Response}(i) \mid \text{Prompt}(i))\right)
 ```
 
-- \( N \): Number of training examples  
-- \( p_\theta \): Model’s predicted probability under parameters \( \theta \)  
-- \( \text{Prompt}(i) \): The input for the \(i\)-th training example  
-- \( \text{Response}(i) \): The ideal response for the \(i\)-th training example  
+Where:
+- N: Number of training examples  
+- p_theta: Model’s predicted probability under parameters θ  
+- Prompt(i): The input for the i-th training example  
+- Response(i): The ideal response for the i-th training example  
 
 This equation encourages the model to assign **high probability to the correct full response**  
   
@@ -39,11 +40,10 @@ Then the SFT loss becomes:
 ```
   
 This means:  
-- For each sample \( i \), we break the response into tokens
-- For each token \( y_t \), we calculate the log-probability given:
-  - The prompt
-  - The previous tokens in the response (due to autoregressive decoding)
-- The loss is the **negative sum** of these log-probabilities
+- For each sample i, split the response into tokens y₁, y₂, ..., y_T
+- At each time step t, compute the probability of the correct token y_t
+- Condition on both the prompt and the previous tokens y₁ to y_{t-1}
+- The total loss is the negative log-likelihood summed over all tokens in all samples
   
   
 > SFT teaches the model *what to say* by showing it good examples.  
