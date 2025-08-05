@@ -1,5 +1,14 @@
 # LLM-Learning-Notes
-## Fine-tuning
+## Post-training
+## Do you really need post-training?
+
+| Use Cases                                                                 | Methods                                              | Characteristics                                                                                   |
+|---------------------------------------------------------------------------|------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Follow a few instructions (do not discuss XXX)                            | Prompting                                            | Simple yet brittle: models may not always follow all instructions                                 |
+| Query real-time database or knowledgebase                                 | Retrieval-Augmented Generation (RAG) or Search       | Adapt to rapidly-changing knowledgebase                                                           |
+| Create a medical LLM / Cybersecurity LLM                                  | Continual Pre-training + Post-training               | Inject large-scale domain knowledge (>1B tokens) not seen during pre-training                     |
+| Follow 20+ instructions tightly; Improve targeted capabilities            | Post-training                                        | Reliably change model behavior & improve targeted capabilities; May degrade other capabilities if not done right |
+
 | Method | Data Format | Objective | Learning Focus | Use Cases |
 |--------|-------------|-----------|----------------|-----------|
 | **SFT** | `Input + Output` | Mimic responses | Teaches the model *what* to output | Structured tasks like function calls, learning stop tokens, constrained outputs |
