@@ -16,9 +16,9 @@
 
 ### Supervised Fine-Tuning
 Supervised Fine-Tuning (SFT) trains a language model to generate ideal responses to prompts by **imitating human-annotated examples**. It does this by minimizing the **negative log-likelihood** of the correct responses using a cross-entropy loss.  
-\[
+```math
 \mathcal{L}_{\text{SFT}} = -\sum_{i=1}^{N} \log \left(p_\theta(\text{Response}(i) \mid \text{Prompt}(i))\right)
-\]
+```
 
 - \( N \): Number of training examples  
 - \( p_\theta \): Model’s predicted probability under parameters \( \theta \)  
@@ -28,15 +28,15 @@ Supervised Fine-Tuning (SFT) trains a language model to generate ideal responses
 This equation encourages the model to assign **high probability to the correct full response**  
   
 Each response is a sequence of tokens:  
-\[
+```math
 \text{Response}^{(i)} = (y_1^{(i)}, y_2^{(i)}, \dots, y_{T_i}^{(i)})
-\]
+```
   
 Then the SFT loss becomes:  
 
-\[
+```math
 \mathcal{L}_{\text{SFT}} = - \sum_{i=1}^{N} \sum_{t=1}^{T_i} \log p_\theta\left(y_t^{(i)} \mid \text{Prompt}^{(i)}, y_1^{(i)}, \dots, y_{t-1}^{(i)}\right)
-\]
+```
   
 This means:  
 - For each sample \( i \), we break the response into tokens
@@ -49,11 +49,7 @@ This means:
 > SFT teaches the model *what to say* by showing it good examples.  
 > The model is rewarded when it assigns **high probability to the correct next token** at each step.  
 > The loss gets smaller as the model gets better at predicting the human response token by token.
-
-This is equivalent to **cross-entropy loss** for language modeling.
-
 ---
-
 
 ### LoRA and QLoRA
 All matrices can be decomposed using Singular Value Decomposition (SVD). A low-rank matrix has fewer non-zero singular values than the number of rows, which means its information can be represented using fewer “directions” in space. In LLMs, the model parameters are typically high-rank matrices, as they need to encode rich and diverse information across many dimensions. However, during fine-tuning, the delta matrix which represents updates to the original model parameters is often low-rank because the new information is task-specific and relatively narrow in scope.  
