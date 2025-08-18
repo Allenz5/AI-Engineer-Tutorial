@@ -25,7 +25,7 @@ Supervised Fine-Tuning (SFT) trains a language model to generate ideal responses
 
 Where:
 - N: Number of training examples  
-- p_theta: Model’s predicted probability under parameters θ  
+- p_theta: Model with parameters θ  
 - Prompt(i): The input for the i-th training example  
 - Response(i): The ideal response for the i-th training example  
 
@@ -62,15 +62,49 @@ We still use backpropagation to train the two matrices A and B. The main hyperpa
   
 In LLMs, parameters are typically stored as floating-point numbers. Mathematically, there's a technique called quantization, which allows us to represent a float matrix using integers while preserving most of its information. In QLoRA, we apply quantization to reduce the memory footprint during fine-tuning by storing the model in an integer format (e.g., int4 or int8). When performing inference, the model is converted back to float as needed. This approach allows efficient fine-tuning of large models with significantly reduced hardware requirements.  
 
+---
+
 ### Catastrophic Forgetting
+
 Catastrophic forgetting refers to the phenomenon where a large language model (LLM) loses previously learned knowledge and suffers performance degradation after being fine-tuned. This typically happens because the updated parameters drift too far from the original pre-trained parameters. To mitigate this, many techniques are designed to constrain the parameter updates and preserve the model’s original knowledge. Mathematically, this can be achieved by reducing the learning rate, applying regularization methods such as KL-divergence (as in GRPO) or L2 regularization, and using Elastic Weight Consolidation (EWC). Parameter-Efficient Fine-Tuning (PEFT) methods like LoRA also help prevent catastrophic forgetting by updating only a small subset of parameters. In LoRA, the scaling factor further controls the extent of parameter modification. In addition to model-level techniques, careful design of the training pipeline can also reduce the risk of catastrophic forgetting from a systems perspective.  
+
+---
+
 ### PPO
+
+---
+
 ### DPO
+
+DPO minimizes the contrastive loss which penalize negative response and encourages positive response.  
+```math
+\mathcal{L}_{\text{DPO}} = - \log \sigma \Bigg( 
+\beta \Big( 
+\log \frac{\pi_\theta(y_{\text{pos}} \mid x)}{\pi_{\text{ref}}(y_{\text{pos}} \mid x)} 
+- 
+\log \frac{\pi_\theta(y_{\text{neg}} \mid x)}{\pi_{\text{ref}}(y_{\text{neg}} \mid x)} 
+\Big) 
+\Bigg)
+```
+This means:
+- If the model prefers to generate the positive response, the difference becomes larger.  
+- Beta is a hyperparameter to adjust the effect.  
+- Sigmoid converts the difference into a probability between 0 and 1 to guide the loss function.  
+  
+DPO is best used for changing model behavior with small adjustments like identity, multilingual ability, instruction following, and safety. It is also effective for improving model capabilities, performing better than SFT due to its contrastive nature, and online DPO works better than offline for capability improvement.  
+
+High-quality DPO data can be curated through correction, where the original model’s response is treated as negative and an improved version as positive, or through online/on-policy methods, where multiple responses are generated and the best is chosen as positive and the worst as negative using reward functions or human judgment. To avoid overfitting, ensure positive samples do not rely on shortcuts, such as always containing a few special words.  
+
+---
+
 ### DeepSeek R1 and GRPO
+
 DeepSeek R1 exclusively uses questions with verifiable answers, such as coding and math challenges. They initially verified that the reasoning process (Chain of Thought) becomes more sophisticated, reasoning time increases, and accuracy improves when a large language model is post-trained solely on questions with known correct answers. This was the *“Aha” moment* for DeepSeek R1. They created a rule-based reward system for reinforcement learning. 
   
 For each prompt, a group of responses is generated and scored using a reward model. The average score across these responses is used as the baseline (Monte Carlo Method), and the advantage of each response is computed relative to this baseline. The advantage is then used to calculate the loss for each response, which guides the model’s gradient update. In this way, the average score reflects the model’s current capability and serves as a baseline. The model is then updated to move toward behaviors we prefer and away from those we do not.  
   
 Unlike DPO and PPO, Group Relative Policy Optimization (GRPO) also uses KL-Divergence with clipping to prevent the model from deviating too far from the initial model and experiencing catastrophic forgetting. KL-Divergence measures the difference between two models.  
+
+---
 
 ### Offline
