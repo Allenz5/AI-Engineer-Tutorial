@@ -94,6 +94,28 @@ High-quality DPO data can be curated through correction, where the original mode
 
 ---
 
+### Policy Gradient Update
+
+```math
+\theta \leftarrow \theta + \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_t \mid s_t) \cdot G_t
+```
+- $a_t$: action at timestep $t$ 
+- $s_t$: state at timestep $t$  
+- $\pi_{\theta}$: policy parameterized by $theta$  
+- $G_t$: return from timestep $t$  
+
+This is the standard **policy gradient update rule** in reinforcement learning. It updates the policy by weighting the log-probability of actions with their corresponding returns.  
+
+The key component is $G_t$:  
+- If $G_t > 0$, the action is reinforced (the policy is rewarded).  
+- If $G_t < 0$, the action is discouraged (the policy is penalized).  
+
+In **PPO** and **GRPO**, $G_t$ is computed using a reward together with a baseline. The baseline is needed because sometimes the state itself already has a high expected return regardless of the action. Without a baseline, we might overestimate the contribution of a specific action.  
+
+- **PPO**: uses a **trainable value model** as the baseline, estimating the expected return for each state.  
+- **GRPO**: uses the **average reward of a group of generated answers** as the baseline, which is shared across states within that group.  
+  
+---
 
 ### PPO
 
@@ -167,13 +189,31 @@ A_t = R_t - V_\theta(s_t)
 
 ---
 
-### DeepSeek R1 and GRPO
+### GRPO
+The **Group Relative Policy Optimization (GRPO)** objective extends PPO by using group-based advantages and a KL penalty.  
 
-DeepSeek R1 exclusively uses questions with verifiable answers, such as coding and math challenges. They initially verified that the reasoning process (Chain of Thought) becomes more sophisticated, reasoning time increases, and accuracy improves when a large language model is post-trained solely on questions with known correct answers. This was the *“Aha” moment* for DeepSeek R1. They created a rule-based reward system for reinforcement learning. 
-  
-For each prompt, a group of responses is generated and scored using a reward model. The average score across these responses is used as the baseline (Monte Carlo Method), and the advantage of each response is computed relative to this baseline. The advantage is then used to calculate the loss for each response, which guides the model’s gradient update. In this way, the average score reflects the model’s current capability and serves as a baseline. The model is then updated to move toward behaviors we prefer and away from those we do not.  
-  
-Unlike DPO and PPO, Group Relative Policy Optimization (GRPO) also uses KL-Divergence with clipping to prevent the model from deviating too far from the initial model and experiencing catastrophic forgetting. KL-Divergence measures the difference between two models.  
+```math
+\mathcal{L}_{\text{GRPO}}(\theta) 
+= \frac{1}{G} \sum_{i=1}^{G} 
+\Big( 
+\min \Big( 
+\frac{\pi_{\theta}(o_i \mid q)}{\pi_{\theta_{\text{old}}}(o_i \mid q)} A_i,\;
+\text{clip}\!\left(\frac{\pi_{\theta}(o_i \mid q)}{\pi_{\theta_{\text{old}}}(o_i \mid q)}, 1-\epsilon, 1+\epsilon \right) A_i 
+\Big) 
+- \beta D_{\text{KL}}(\pi_{\theta} \parallel \pi_{\text{ref}}) 
+\Big)
+```
+
+```math
+A_i = \frac{r_i - \text{mean}(\{r_1, r_2, \cdots, r_G\})}{\text{std}(\{r_1, r_2, \cdots, r_G\})}
+```
+
+Where:  
+- **Group Output**: Sample outputs in a group of size $G$. The policy is updated using the average loss across all sampled outputs in the group, which is why the term $\frac{1}{G} \sum_{i=1}^{G}$ appears.  
+- **Ratio**: The importance weight is same as in PPO.  
+- **KL Divergence**: KL Divergence term measures the distance between the current policy and the reference policy (often the policy before reinforcement learning). This term penalizes large deviations, ensuring the new policy does not drift too far from the initial one and helping to prevent catastrophic forgetting.  
+- **Group-normalized Advantage**: The advantage is computed as the reward minus the average reward of the group, normalized by the group’s standard deviation.  
+
 
 ---
 
@@ -181,4 +221,4 @@ Unlike DPO and PPO, Group Relative Policy Optimization (GRPO) also uses KL-Diver
 
 ---
 
-### Offline
+### Offline vs. Online
