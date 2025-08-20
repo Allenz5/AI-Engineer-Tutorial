@@ -70,10 +70,6 @@ Catastrophic forgetting refers to the phenomenon where a large language model (L
 
 ---
 
-### PPO
-
----
-
 ### DPO
 
 DPO minimizes the contrastive loss which penalize negative response and encourages positive response.  
@@ -90,10 +86,84 @@ This means:
 - If the model prefers to generate the positive response, the difference becomes larger.  
 - Beta is a hyperparameter to adjust the effect.  
 - Sigmoid converts the difference into a probability between 0 and 1 to guide the loss function.  
+- Larger difference means the sigmoid approaches 1, so −log approaches 0. Zero or negative difference makes the sigmoid less than 0.5, so −log becomes large.
   
 DPO is best used for changing model behavior with small adjustments like identity, multilingual ability, instruction following, and safety. It is also effective for improving model capabilities, performing better than SFT due to its contrastive nature, and online DPO works better than offline for capability improvement.  
 
 High-quality DPO data can be curated through correction, where the original model’s response is treated as negative and an improved version as positive, or through online/on-policy methods, where multiple responses are generated and the best is chosen as positive and the worst as negative using reward functions or human judgment. To avoid overfitting, ensure positive samples do not rely on shortcuts, such as always containing a few special words.  
+
+---
+
+
+### PPO
+
+The **reward model**’s goal is to output a scalar score given a prompt and an answer.
+
+```math
+\mathcal{L}_{\text{RM}}(\phi)
+= - \mathbb{E}_{(x, y^{+}, y^{-})}
+\left[
+\log \sigma\!\big( r_\phi(x, y^{+}) - r_\phi(x, y^{-}) \big)
+\right]
+```
+
+- The goal is maximize the difference between positive answer and negative answer  
+- Sigmoid Converts the score difference into a probability of preference. 
+- E means averaging the training batch to decrease variance (mini-batch SGD)
+- Larger difference means the sigmoid approaches 1, so −log approaches 0. Zero or negative difference makes the sigmoid less than 0.5, so −log becomes large.
+  
+The **value model** estimates the **expected reward** (baseline) given a state or prompt \(s\). It helps reduce variance in policy gradient updates by providing a reference value for computing the **advantage**. Without this baseline, it would be unclear whether a reward is actually good or bad, making it hard to determine the correct update direction. For example, generating “The” at the beginning already has a high baseline, so we don’t want to encourage it any further
+
+```math
+\mathcal{L}_{\text{value}}(\theta)
+= \mathbb{E}_{t}\left[ \big( V_\theta(s_t) - R_t \big)^2 \right]
+```
+
+
+- **$V_\theta(s_t)$:** The predicted value (expected reward) for state \(s_t\).  
+- **$R_t$:** The scalar reward from the reward model. We cannot get exact $R_t$ for each state in trajectory from final reward. We typically use Monte Carlo return, GAE or Temporal Difference (TD) Learning to approximate $R_t$.
+- **Goal:** Minimize the difference between predicted value and actual return, so the value model becomes a good baseline.  
+- If the value model predicts too low but the return is high → it updates upward.  
+- If it predicts too high but the return is low → it updates downward.  
+- Over time, $V_\theta(s)$ converges to the **average reward** for each state.  
+
+
+Once the reward model and value model are available, PPO updates the policy using Advantage while preventing large policy updates.  
+
+Define the probability ratio:  
+```math
+r_t(\theta) = \frac{\pi_\theta(a_t | s_t)}{\pi_{\theta_{\text{old}}}(a_t | s_t)}
+```
+
+The clipped surrogate loss is:  
+```math
+\mathcal{L}_{\text{PPO}}(\theta) =
+\mathbb{E}_t\Big[
+\min\big(
+r_t(\theta) \cdot A_t,\;
+\text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \cdot A_t
+\big)
+\Big]
+```
+
+The advantage is:  
+```math
+
+A_t = R_t - V_\theta(s_t)
+
+```
+- $\pi_\theta(a_t | s_t)$: current policy probability of action \(a_t\) at state \(s_t\)  
+- $\pi_{\theta_{\text{old}}}(a_t | s_t)$: reference (previous) policy probability  
+- **Ratio:** This is an **importance weight** that re-weights actions sampled from the old policy so they can be correctly evaluated under the new policy.  
+  - If $r_t > 1$: the new policy assigns higher probability to this action than before.  
+  - If $r_t < 1$: the new policy assigns lower probability.  
+  - Importance weighting ensures the policy gradient remains unbiased even though samples were drawn from the old policy, making PPO a form of **off-policy correction**
+- **Clipping:**  
+  - Prevents excessively large updates when \(r_t\) moves too far from 1.  
+  - Keeps training stable by limiting the change to within \([1-\epsilon, 1+\epsilon]\).  
+- **$R_t$:** The scalar reward from the reward model. We cannot get exact $R_t$ for each state in trajectory from final reward. We typically use Monte Carlo return, GAE or Temporal Difference (TD) Learning to approximate $R_t$.
+- If $A_t > 0$: action was **better than expected** → increase $\pi_\theta(a_t | s_t)$ probability.  
+- If $A_t < 0$: action was **worse than expected** → decrease $\pi_\theta(a_t | s_t)$ probability.  
 
 ---
 
@@ -104,6 +174,10 @@ DeepSeek R1 exclusively uses questions with verifiable answers, such as coding a
 For each prompt, a group of responses is generated and scored using a reward model. The average score across these responses is used as the baseline (Monte Carlo Method), and the advantage of each response is computed relative to this baseline. The advantage is then used to calculate the loss for each response, which guides the model’s gradient update. In this way, the average score reflects the model’s current capability and serves as a baseline. The model is then updated to move toward behaviors we prefer and away from those we do not.  
   
 Unlike DPO and PPO, Group Relative Policy Optimization (GRPO) also uses KL-Divergence with clipping to prevent the model from deviating too far from the initial model and experiencing catastrophic forgetting. KL-Divergence measures the difference between two models.  
+
+---
+
+### Gradient Descent
 
 ---
 
