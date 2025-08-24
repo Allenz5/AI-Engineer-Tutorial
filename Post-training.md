@@ -219,6 +219,31 @@ Where:
 
 ### Gradient Descent
 
+- **Define the model function** with parameters $\theta$ (e.g., $f_\theta(x)$).  
+- **Choose a loss function** $L(\theta)$ that measures the difference between predictions and true values.  
+   - Example: Mean Squared Error (MSE):  
+     $$
+     L(\theta) = \frac{1}{N} \sum_{i=1}^N (f_\theta(x_i) - y_i)^2
+     $$  
+- **Compute the gradient** of the loss function with respect to $\theta$:  
+   $$
+   \nabla_\theta L(\theta)
+   $$  
+   In this step, we need to substitute data points to calculate the gradient. There are multiple ways to do this:
+    - **Batch Gradient Descent (GD):** Uses the entire dataset to compute the gradient.  
+    - **Stochastic Gradient Descent (SGD):** Uses a single sample per update.  
+    - **Mini-batch SGD:** Uses a small batch of samples (most common in practice).  
+- **Update parameters** in the opposite direction of the gradient:  
+   $$
+   \theta \leftarrow \theta - \eta \cdot \nabla_\theta L(\theta)
+   $$  
+   where $\eta$ is the learning rate.  
+- **Repeat** until convergence (loss becomes small or parameters stabilize).  
+
+- **Average vs. Sum:**  
+  - Loss is usually written as an **average** over data points (not sum).  
+  - This keeps the loss scale independent of dataset size and makes learning rate tuning easier.  
+
 ---
 
 ### Offline vs. Online
