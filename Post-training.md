@@ -247,3 +247,10 @@ Where:
 ---
 
 ### Offline vs. Online
+- **Online post-training**:
+The model generates new samples during training using its current policy. These samples are then used to update the model. It requires continuous rollouts and exploration.
+- **Offline post-training**:
+Training is done on a fixed, pre-collected dataset without generating new samples during optimization. It is closer to supervised learning.
+- **PPO**: strictly online, because it relies on policy rollouts and feedback.
+- **GRPO**: designed as online (like PPO), but it can be approximated in an offline setting if a dataset of group outputs and rewards is available.
+- **DPO & SFT**: strictly offline, because they rely on pre-collected dataset.
